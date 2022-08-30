@@ -7,7 +7,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsc",
-        "start": "node dist/src/server.js",
+        "start": "node dist/server.js",
         "dev": "nodemon src/server.ts"
     },
     "keywords": [],
@@ -19,6 +19,7 @@
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "express-async-errors": "^3.1.1",
+        "joi": "^17.6.0",
         "pg": "^8.7.3"
     },
     "devDependencies": {
