@@ -1,4 +1,4 @@
-import connection from '../database.js';
+import connection from '../config/database.js';
 import mapObjectToUpdateQuery from '../utils/sqlUtils.js';
 
 export type TransactionTypes = 'groceries' | 'restaurant' | 'transport' | 'education' | 'health';
