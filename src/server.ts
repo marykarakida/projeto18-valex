@@ -17,7 +17,7 @@ app.use(router);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 4000;
+const PORT: number = Number(process.env.PORT) || 4000;
 
 app.listen(PORT, () => {
     console.log('Server running on port', PORT);
