@@ -1,17 +1,21 @@
 import { faker } from '@faker-js/faker';
 import Cryptr from 'cryptr';
+import bcrypt from 'bcrypt';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 
 import { TransactionTypes } from '../repositories/cardRepository.js';
 import * as cardRepository from '../repositories/cardRepository.js';
 import * as companyRepository from '../repositories/companyRepository.js';
 import * as employeeRepository from '../repositories/employeeRepository.js';
 
-import { notFoundError, conflictError } from '../middlewares/errorMiddleware.js';
+import { notFoundError, conflictError, forbiddenError, unauthorizedError } from '../middlewares/errorMiddleware.js';
 
 import abreviateMiddleName from '../utils/cardUtils.js';
 
-async function createNewCard(apiKey: string, employeeId: number, type: TransactionTypes) {
+dayjs.extend(customParseFormat);
+
+export async function createCard(apiKey: string, employeeId: number, type: TransactionTypes) {
     const company = await companyRepository.findByApiKey(apiKey);
     if (!company) {
         throw notFoundError('company');
@@ -48,4 +52,28 @@ async function createNewCard(apiKey: string, employeeId: number, type: Transacti
     await cardRepository.insert(cardData);
 }
 
-export default createNewCard;
+export async function activateCard(cardId: number, password: string, securityCode: string) {
+    const card = await cardRepository.findById(cardId);
+    if (!card) {
+        throw notFoundError('card');
+    }
+
+    if (!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
+        throw forbiddenError('activate card');
+    }
+
+    if (card.password) {
+        throw forbiddenError('activate card more than once');
+    }
+
+    const cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY);
+
+    if (securityCode !== cryptr.decrypt(card.securityCode)) {
+        throw unauthorizedError('security code');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await cardRepository.update(cardId, { password: hashedPassword });
+}

@@ -11,6 +11,7 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "import/extensions": ["error", { "js": "ignorePackages" }]
+        "import/extensions": ["error", { "js": "ignorePackages" }],
+        "import/no-unresolved": "off"
     }
 }
