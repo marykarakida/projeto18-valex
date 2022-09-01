@@ -33,7 +33,7 @@ export async function createCard(apiKey: string, employeeId: number, type: Trans
 
     const cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY);
 
-    const number = faker.finance.creditCardNumber();
+    const number = faker.finance.creditCardNumber('#### #### #### ####');
     const cardholderName = abreviateMiddleName(employee.fullName);
     const securityCode = cryptr.encrypt(faker.finance.creditCardCVV());
     const expirationDate = dayjs().add(5, 'years').format('MM/YY');
@@ -52,10 +52,14 @@ export async function createCard(apiKey: string, employeeId: number, type: Trans
     await cardRepository.insert(cardData);
 }
 
-export async function activateCard(cardId: number, password: string, securityCode: string) {
+export async function activateCard(employeeId: number, cardId: number, password: string, securityCode: string) {
     const card = await cardRepository.findById(cardId);
     if (!card) {
         throw notFoundError('card');
+    }
+
+    if (employeeId !== card.employeeId) {
+        throw forbiddenError("activate another user's card");
     }
 
     if (!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {

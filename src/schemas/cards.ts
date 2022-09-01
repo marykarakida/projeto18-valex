@@ -6,6 +6,7 @@ export const newCardSchema = Joi.object({
 });
 
 export const activateCardSchema = Joi.object({
+    employeeId: Joi.number().required(),
     password: Joi.string()
         .regex(/^[0-9]*$/)
         .length(4)

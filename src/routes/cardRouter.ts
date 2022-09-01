@@ -6,8 +6,8 @@ import * as cardController from '../controllers/cardController.js';
 
 const router = Router();
 
-router.post('/', validateApiKey, validateSchema('newCardSchema'), cardController.createCard);
+router.route('/').post(validateApiKey, validateSchema('newCardSchema'), cardController.createCard);
 
-router.post('/:cardId/activate', validateSchema('activateCardSchema'), cardController.activateCard);
+router.route('/:cardId/activate').post(validateSchema('activateCardSchema'), cardController.activateCard);
 
 export default router;
