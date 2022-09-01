@@ -7,4 +7,6 @@ const router = Router();
 
 router.post('/:businessId/purchase', validateSchema('physicalPurchaseSchema'), businessController.makePhysicalPurchase);
 
+router.post('/:businessId/online-purchase', validateSchema('onlinePurchaseSchema'), businessController.makeOnlinePurchase);
+
 export default router;

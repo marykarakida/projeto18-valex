@@ -12,5 +12,17 @@ export async function makePhysicalPurchase(req: Request, res: Response) {
 }
 
 export async function makeOnlinePurchase(req: Request, res: Response) {
+    const { businessId } = req.params;
+    const { number, cardHolderName, securityCode, expirationDate, amount } = req.body;
+
+    await businessService.makeOnlinePurchase({
+        businessId: Number(businessId),
+        number,
+        cardHolderName,
+        securityCode,
+        expirationDate,
+        amount,
+    });
+
     res.sendStatus(201);
 }
