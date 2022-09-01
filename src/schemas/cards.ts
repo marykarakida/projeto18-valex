@@ -6,6 +6,7 @@ export const newCardSchema = Joi.object({
 });
 
 export const activateCardSchema = Joi.object({
+    employeeId: Joi.number().required(),
     password: Joi.string()
         .regex(/^[0-9]*$/)
         .length(4)
@@ -20,4 +21,8 @@ export const activateCardSchema = Joi.object({
         .messages({
             'string.pattern.base': '"securityCode" must be a numeric string',
         }),
+});
+
+export const rechargeCardSchema = Joi.object({
+    amount: Joi.number().min(0).required(),
 });

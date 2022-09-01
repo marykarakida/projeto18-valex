@@ -1,5 +1,5 @@
-import { newCardSchema, activateCardSchema } from './cards.js';
+import { newCardSchema, activateCardSchema, rechargeCardSchema } from './cards.js';
 
-const schemas = { newCardSchema, activateCardSchema };
+const schemas = { newCardSchema, activateCardSchema, rechargeCardSchema };
 
 export default schemas;
