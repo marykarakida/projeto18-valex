@@ -8,6 +8,7 @@ import { TransactionTypes } from '../repositories/cardRepository.js';
 import * as cardRepository from '../repositories/cardRepository.js';
 import * as companyRepository from '../repositories/companyRepository.js';
 import * as employeeRepository from '../repositories/employeeRepository.js';
+import * as rechargeRepository from '../repositories/rechargeRepository.js';
 
 import { notFoundError, conflictError, forbiddenError, unauthorizedError } from '../middlewares/errorMiddleware.js';
 
@@ -63,7 +64,7 @@ export async function activateCard(employeeId: number, cardId: number, password:
     }
 
     if (!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
-        throw forbiddenError('activate card');
+        throw forbiddenError('activate expired card');
     }
 
     if (card.password) {
@@ -80,4 +81,21 @@ export async function activateCard(employeeId: number, cardId: number, password:
     const hashedPassword = await bcrypt.hash(password, salt);
 
     await cardRepository.update(cardId, { password: hashedPassword });
+}
+
+export async function rechargeCard(cardId: number, amount: number) {
+    const card = await cardRepository.findById(cardId);
+    if (!card) {
+        throw notFoundError('card');
+    }
+
+    if (!card.password) {
+        throw forbiddenError('recharge inactive card');
+    }
+
+    if (!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
+        throw forbiddenError('recharge expired card');
+    }
+
+    await rechargeRepository.insert({ cardId, amount });
 }

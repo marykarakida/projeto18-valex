@@ -22,3 +22,7 @@ export const activateCardSchema = Joi.object({
             'string.pattern.base': '"securityCode" must be a numeric string',
         }),
 });
+
+export const rechargeCardSchema = Joi.object({
+    amount: Joi.number().min(0).required(),
+});

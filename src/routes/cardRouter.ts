@@ -9,5 +9,6 @@ const router = Router();
 router.route('/').post(validateApiKey, validateSchema('newCardSchema'), cardController.createCard);
 
 router.route('/:cardId/activate').post(validateSchema('activateCardSchema'), cardController.activateCard);
+router.route('/:cardId/recharge').post(validateApiKey, validateSchema('rechargeCardSchema'), cardController.rechargeCard);
 
 export default router;
