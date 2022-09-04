@@ -1,4 +1,4 @@
-function abreviateMiddleName(fullName: string): string {
+export function abreviateMiddleName(fullName: string): string {
     const [first, ...rest] = fullName.split(' ');
     const last = rest.pop();
 
@@ -7,4 +7,6 @@ function abreviateMiddleName(fullName: string): string {
     return [first, ...middle, last].join(' ').toUpperCase();
 }
 
-export default abreviateMiddleName;
+export function sumTotalAmount(array: { amount: number }[]) {
+    return array.reduce((prev: number, cur: { amount: number }) => prev + cur.amount, 0);
+}
