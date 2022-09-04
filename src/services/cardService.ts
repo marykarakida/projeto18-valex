@@ -115,3 +115,14 @@ export async function activateCard(employeeId: number, cardId: number, password:
     const hashedPassword = await bcrypt.hash(password, salt);
     await cardRepository.update(cardId, { password: hashedPassword });
 }
+
+export async function blockCard(employeeId: number, cardId: number, password: string) {
+    const card = await ensureCardExistsById(cardId);
+
+    ensureEmployeeIsCardOwner(employeeId, card.employeeId);
+    ensureCardPasswordIsValid(password, card.password);
+    ensureCardHasNotExpired(card.expirationDate);
+    ensureCardIsUnblocked(card.isBlocked);
+
+    await cardRepository.update(cardId, { isBlocked: true });
+}

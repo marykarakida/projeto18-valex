@@ -28,3 +28,15 @@ export const activateCardSchema = Joi.object({
 export const rechargeCardSchema = Joi.object({
     amount: Joi.number().min(1).required(),
 });
+
+export const blockCardSchema = Joi.object({
+    employeeId: Joi.number().required(),
+    password: Joi.string()
+        .trim()
+        .regex(/^[0-9]*$/)
+        .length(4)
+        .required()
+        .messages({
+            'string.pattern.base': '"password" must be a numeric string',
+        }),
+});
