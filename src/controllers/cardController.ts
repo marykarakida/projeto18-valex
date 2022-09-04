@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import * as cardService from '../services/cardService.js';
+import * as rechargeService from '../services/rechargeService.js';
 import { Card } from '../repositories/cardRepository.js';
 import { Recharge } from '../repositories/rechargeRepository.js';
 
@@ -26,7 +27,7 @@ export async function rechargeCard(req: Request, res: Response) {
     const { cardId } = req.params;
     const { amount }: Partial<Recharge> = req.body;
 
-    await cardService.rechargeCard(Number(cardId), amount);
+    await rechargeService.rechargeCard(Number(cardId), amount);
 
     res.sendStatus(200);
 }
