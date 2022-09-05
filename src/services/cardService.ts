@@ -108,6 +108,20 @@ export async function createCard(apiKey: string, employeeId: number, type: cardR
     await cardRepository.insert(cardData);
 }
 
+export async function getCardBalance(cardId: number) {
+    await ensureCardExistsById(cardId);
+
+    const cardPurchaseHistory = await paymentService.getCardPaymentHistory(cardId);
+    const cardRechargeHistory = await rechargeService.getCardRechargeHistory(cardId);
+    const cardBalance = sumTotalAmount(cardRechargeHistory) - sumTotalAmount(cardPurchaseHistory);
+
+    return {
+        balance: cardBalance,
+        transactions: cardPurchaseHistory,
+        recharges: cardRechargeHistory,
+    };
+}
+
 export async function activateCard(employeeId: number, cardId: number, password: string, securityCode: string) {
     const card = await ensureCardExistsById(cardId);
 
