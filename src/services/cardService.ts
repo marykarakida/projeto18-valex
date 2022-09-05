@@ -94,18 +94,20 @@ export async function createCard(apiKey: string, employeeId: number, type: cardR
     await ensureOneCardPerTypePerEmployee(type, employeeId);
 
     const cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY);
+    const cvv = faker.finance.creditCardCVV();
 
     const cardData = {
         employeeId,
         number: faker.finance.creditCardNumber('#### #### #### ####'),
         cardholderName: abreviateMiddleName(employee.fullName),
-        securityCode: cryptr.encrypt(faker.finance.creditCardCVV()),
+        securityCode: cryptr.encrypt(cvv),
         expirationDate: dayjs().add(5, 'years').format('MM/YY'),
-        isVirtual: false,
-        isBlocked: false,
         type,
     };
-    await cardRepository.insert(cardData);
+
+    const { id } = await cardRepository.insert({ ...cardData, isVirtual: false, isBlocked: false });
+
+    return { id, ...cardData, securityCode: cvv };
 }
 
 export async function getCardBalance(cardId: number) {
