@@ -13,8 +13,8 @@ export function unauthorizedError(credential: string): Error {
     return { type: 'error_unauthorized', message: `Invalid or non-existent ${credential}` };
 }
 
-export function forbiddenError(action: string): Error {
-    return { type: 'error_forbidden', message: `Cannot ${action}` };
+export function forbiddenError(message: string): Error {
+    return { type: 'error_forbidden', message };
 }
 
 export function notFoundError(entity: string): Error {

@@ -35,24 +35,28 @@ export async function ensureCardExistsByCardDetail(
 }
 
 export function ensureEmployeeIsCardOwner(employeeId: number, cardOwnerId: number) {
-    if (employeeId !== cardOwnerId) throw forbiddenError("activate another user's card");
+    if (employeeId !== cardOwnerId) throw forbiddenError('Emplooyee id is invalid');
 }
 
 export function ensureCardIsActive(password: string) {
-    if (!password) throw forbiddenError('recharge inactive card');
+    if (!password) throw forbiddenError('Card is inactive');
 }
 
 export function ensureCardIsInactive(password: string) {
-    if (password) throw forbiddenError('activate card more than once');
+    if (password) throw forbiddenError('Card is active');
 }
 
 export function ensureCardIsUnblocked(isBlocked: boolean) {
-    if (isBlocked) throw forbiddenError('make purchases with a blocked card');
+    if (isBlocked) throw forbiddenError('Card is blocked');
+}
+
+export function ensureCardIsBlocked(isBlocked: boolean) {
+    if (!isBlocked) throw forbiddenError('Card is unblocked');
 }
 
 export function ensureCardHasNotExpired(expirationDate: string) {
     const hasCardExpired = !dayjs().isBefore(dayjs(expirationDate, 'MM/YY'), 'month');
-    if (hasCardExpired) throw forbiddenError('activate expired card');
+    if (hasCardExpired) throw forbiddenError('Card has expired');
 }
 
 export async function ensureCardHasBalance(cardId: number, amount: number) {
@@ -60,7 +64,7 @@ export async function ensureCardHasBalance(cardId: number, amount: number) {
     const cardPurchaseHistory = await paymentService.getCardPaymentHistory(cardId);
 
     const cardBalance = sumTotalAmount(cardRechargeHistory) - sumTotalAmount(cardPurchaseHistory);
-    if (cardBalance - amount < 0) throw forbiddenError('complete purchase due to insuficient money');
+    if (cardBalance - amount < 0) throw forbiddenError('Card has insuficient balance');
 }
 
 export function ensureCardSecurityCodeIsValid(securityCode: string, cardSecurityCode: string) {
@@ -114,4 +118,26 @@ export async function activateCard(employeeId: number, cardId: number, password:
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     await cardRepository.update(cardId, { password: hashedPassword });
+}
+
+export async function blockCard(employeeId: number, cardId: number, password: string) {
+    const card = await ensureCardExistsById(cardId);
+
+    ensureEmployeeIsCardOwner(employeeId, card.employeeId);
+    ensureCardPasswordIsValid(password, card.password);
+    ensureCardHasNotExpired(card.expirationDate);
+    ensureCardIsUnblocked(card.isBlocked);
+
+    await cardRepository.update(cardId, { isBlocked: true });
+}
+
+export async function unblockCard(employeeId: number, cardId: number, password: string) {
+    const card = await ensureCardExistsById(cardId);
+
+    ensureEmployeeIsCardOwner(employeeId, card.employeeId);
+    ensureCardPasswordIsValid(password, card.password);
+    ensureCardHasNotExpired(card.expirationDate);
+    ensureCardIsBlocked(card.isBlocked);
+
+    await cardRepository.update(cardId, { isBlocked: false });
 }

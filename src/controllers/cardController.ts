@@ -31,3 +31,21 @@ export async function rechargeCard(req: Request, res: Response) {
 
     res.sendStatus(200);
 }
+
+export async function blockCard(req: Request, res: Response) {
+    const { cardId } = req.params;
+    const { employeeId, password }: Partial<Card> = req.body;
+
+    await cardService.blockCard(Number(employeeId), Number(cardId), password);
+
+    res.sendStatus(200);
+}
+
+export async function unblockCard(req: Request, res: Response) {
+    const { cardId } = req.params;
+    const { employeeId, password }: Partial<Card> = req.body;
+
+    await cardService.unblockCard(Number(employeeId), Number(cardId), password);
+
+    res.sendStatus(200);
+}
