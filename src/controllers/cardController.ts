@@ -14,6 +14,14 @@ export async function createCard(req: Request, res: Response) {
     res.sendStatus(201);
 }
 
+export async function getCardBalance(req: Request, res: Response) {
+    const { cardId } = req.params;
+
+    const result = await cardService.getCardBalance(Number(cardId));
+
+    res.status(200).send(result);
+}
+
 export async function activateCard(req: Request, res: Response) {
     const { cardId } = req.params;
     const { employeeId, password, securityCode }: Partial<Card> = req.body;
