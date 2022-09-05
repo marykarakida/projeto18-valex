@@ -9,9 +9,9 @@ export async function createCard(req: Request, res: Response) {
     const { 'x-api-key': apiKey } = req.headers;
     const { employeeId, type }: Partial<Card> = req.body;
 
-    await cardService.createCard(apiKey.toString(), employeeId, type);
+    const result = await cardService.createCard(apiKey.toString(), employeeId, type);
 
-    res.sendStatus(201);
+    res.status(201).send(result);
 }
 
 export async function getCardBalance(req: Request, res: Response) {
