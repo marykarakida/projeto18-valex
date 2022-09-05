@@ -12,5 +12,6 @@ router.route('/:cardId/activate').post(validateSchema('activateCardSchema'), car
 router.route('/:cardId/recharge').post(validateApiKey, validateSchema('rechargeCardSchema'), cardController.rechargeCard);
 
 router.route('/:cardId/block').post(validateSchema('blockCardSchema'), cardController.blockCard);
+router.route('/:cardId/unblock').post(validateSchema('unblockCardSchema'), cardController.unblockCard);
 
 export default router;

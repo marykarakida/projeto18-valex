@@ -6,6 +6,7 @@ const schemas = {
     activateCardSchema,
     rechargeCardSchema,
     blockCardSchema,
+    unblockCardSchema: blockCardSchema,
     physicalPurchaseSchema,
     onlinePurchaseSchema,
 };

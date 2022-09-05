@@ -50,6 +50,10 @@ export function ensureCardIsUnblocked(isBlocked: boolean) {
     if (isBlocked) throw forbiddenError('make purchases with a blocked card');
 }
 
+export function ensureCardIsBlocked(isBlocked: boolean) {
+    if (!isBlocked) throw forbiddenError('make purchases with a blocked card');
+}
+
 export function ensureCardHasNotExpired(expirationDate: string) {
     const hasCardExpired = !dayjs().isBefore(dayjs(expirationDate, 'MM/YY'), 'month');
     if (hasCardExpired) throw forbiddenError('activate expired card');
@@ -125,4 +129,15 @@ export async function blockCard(employeeId: number, cardId: number, password: st
     ensureCardIsUnblocked(card.isBlocked);
 
     await cardRepository.update(cardId, { isBlocked: true });
+}
+
+export async function unblockCard(employeeId: number, cardId: number, password: string) {
+    const card = await ensureCardExistsById(cardId);
+
+    ensureEmployeeIsCardOwner(employeeId, card.employeeId);
+    ensureCardPasswordIsValid(password, card.password);
+    ensureCardHasNotExpired(card.expirationDate);
+    ensureCardIsBlocked(card.isBlocked);
+
+    await cardRepository.update(cardId, { isBlocked: false });
 }
